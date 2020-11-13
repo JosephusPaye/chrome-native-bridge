@@ -1,0 +1,7 @@
+{
+  "name": "io.github.josephuspaye.chromenativebridge",
+  "description": "Chrome Native Bridge example host",
+  "path": "main.bat",
+  "type": "stdio",
+  "allowed_origins": ["chrome-extension://jmlemfkannhmkhjmpdcdocecfccddlob/"]
+}
