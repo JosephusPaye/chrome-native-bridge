@@ -1,7 +1,7 @@
 {
   "name": "@josephuspaye/chrome-native-bridge",
   "version": "0.0.0",
-  "description": "A utility for buildng Chrome native messaging hosts with Node.js",
+  "description": "A utility for building Chrome native messaging hosts with Node.js",
   "main": "dist/main.js",
   "types": "dist/main.d.ts",
   "repository": "https://github.com/JosephusPaye/chrome-native-bridge.git",
@@ -16,7 +16,7 @@
   "scripts": {
     "build": "tsc",
     "test": "uvu -r esm tests/",
-    "format": "prettier --write \"src/**/*.ts\" \"tests/**/*.js\" \"*.{js,json,md}\" \"host/**/*.{js,json}\" \"extension/**/*.{js,json}\"",
+    "format": "prettier --write \"src/**/*.ts\" \"tests/**/*.js\" \"*.{js,json,md}\" \"example/**/*.{js,json,html}\"",
     "format:check": "prettier --list-different \"src/**/*.ts\" \"tests/**/*.js\" \"*.{js,json,md}\""
   },
   "devDependencies": {
