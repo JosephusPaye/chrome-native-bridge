@@ -17,7 +17,7 @@
     "build": "tsc",
     "test": "uvu -r esm tests/",
     "format": "prettier --write \"src/**/*.ts\" \"tests/**/*.js\" \"*.{js,json,md}\" \"example/**/*.{js,json,html}\"",
-    "format:check": "prettier --list-different \"src/**/*.ts\" \"tests/**/*.js\" \"*.{js,json,md}\""
+    "format:check": "prettier --list-different \"src/**/*.ts\" \"tests/**/*.js\" \"*.{js,json,md}\" \"example/**/*.{js,json,html}\""
   },
   "devDependencies": {
     "@josephuspaye/pipe-emitter": "^0.1.0",
