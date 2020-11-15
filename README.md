@@ -1,6 +1,6 @@
 # chrome-native-bridge
 
-A utility for building [Chrome native messaging](https://developer.chrome.com/extensions/nativeMessaging) hosts with Node.js. Allows you to write Node.js scripts that can communicate bi-directionally with extensions and apps in Chrome.
+A utility for building [Chrome native messaging](https://developer.chrome.com/extensions/nativeMessaging) hosts with Node.js. Allows you to write Node scripts that can communicate bi-directionally with extensions and apps in Chrome.
 
 This project is part of [#CreateWeekly](https://twitter.com/JosephusPaye/status/1214853295023411200), my attempt to create something new publicly every week in 2020.
 
@@ -12,7 +12,7 @@ npm install @josephuspaye/chrome-native-bridge --save
 
 ## Usage
 
-The following example shows a Node.js script that echoes all messages sent to it from Chrome. Note that it doesn't use `console.log()`, as that writes to stdout, which Chrome reads for messages.
+The following example shows a Node script that echoes all messages sent to it from Chrome. Note that it doesn't use `console.log()`, as that writes to stdout, which Chrome reads for messages.
 
 ```js
 import { ChromeNativeBridge } from '@josephuspaye/chrome-native-bridge';
@@ -68,7 +68,7 @@ example\host\install.bat
 
 Similarly, you can uninstall the host manifest by running `example\host\uninstall.bat`.
 
-Note: the install and uninstall scripts are Windows only, but similar scripts [can be written for Linux of macOS](https://developer.chrome.com/extensions/nativeMessaging#native-messaging-host).
+Note: the install and uninstall scripts are Windows only, but similar scripts [can be written for Linux or macOS](https://developer.chrome.com/extensions/nativeMessaging#native-messaging-host).
 
 ### Run it
 
@@ -78,7 +78,7 @@ Start the [example/host/chat.js](example/host/chat.js) script in Node, by runnin
 node example/host/chat.js
 ```
 
-This will start the native chat client and wait for a connection from the host script, which will be launched by Chrome.
+This will start the native chat client and wait for a connection from the host script, which will be launched by Chrome when it connects.
 
 In Chrome, navigate to [chrome://apps](chrome://apps) and launch the **Chrome Native Bridge example** app, then click "Connect to chat". If the host manifest was installed correctly, Chrome will connect to the host, and a chat interface will be shown.
 
@@ -88,7 +88,7 @@ You can now exchanges messages between the Chrome app and the native `chat.js` s
 
 ### `ChromeNativeBridge` class
 
-Implements the Chrome Native Messaging protocol and provides a nicer interface over stdin/stdout for communicating with a Chrome extension from a native Node.js script.
+Implements the Chrome Native Messaging protocol and provides a nicer interface over stdin/stdout for communicating with a Chrome extension from a native Node script.
 
 ```ts
 class ChromeNativeBridge<TSend = any, TReceive = any> {
@@ -159,8 +159,8 @@ type OnErrorHandler = (err: ChromeNativeBridgeError, data: string) => void;
 
 ## Related
 
-- [jdiamond/chrome-native-messaging](https://github.com/jdiamond/chrome-native-messaging): similar project that solves the same problem with a lower-level and more general stream API
-- [JosephusPaye/pipe-emitter](https://github.com/JosephusPaye/pipe-emitter): inter-process event emitter that will allow you to communicate with the native messaging host from another process
+- [jdiamond/chrome-native-messaging](https://github.com/jdiamond/chrome-native-messaging): similar project that solves the same problem with a lower-level stream API
+- [JosephusPaye/pipe-emitter](https://github.com/JosephusPaye/pipe-emitter): inter-process event emitter that allows for communicating with the native messaging host from another process
 
 ## Licence
 
