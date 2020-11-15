@@ -1,6 +1,6 @@
 {
   "name": "@josephuspaye/chrome-native-bridge",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "A utility for building Chrome native messaging hosts with Node.js",
   "main": "dist/main.js",
   "types": "dist/main.d.ts",
