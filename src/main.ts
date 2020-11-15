@@ -1,24 +1,25 @@
 /**
  * An error that occurs while sending or receiving messages.
  */
-type ChromeNativeBridgeError = Error & {
+export type ChromeNativeBridgeError = Error & {
   type: 'SEND_ERROR' | 'RECEIVE_ERROR';
 };
 
 /**
  * Handle a new message.
  */
-type OnMessageHandler<T> = (message: T) => void;
+export type OnMessageHandler<T> = (message: T) => void;
 
 /**
  * Handle an error receiving data. The second parameter
  * is the raw string of the message that caused the error.
  */
-type OnErrorHandler = (err: ChromeNativeBridgeError, data: string) => void;
+export type OnErrorHandler = (err: ChromeNativeBridgeError, data: string) => void;
 
 /**
- * A Chrome to native bridge. Provides a nicer interface over stdin/stdout
- * for communicating with a Chrome extension from a native host binary.
+ * Implements the Chrome Native Messaging protocol and provides
+ * a nicer interface over stdin/stdout for communicating with
+ * a Chrome extension from a native Node.js script.
  */
 export class ChromeNativeBridge<TSend = any, TReceive = any> {
   private input: NodeJS.ReadableStream;
@@ -37,14 +38,16 @@ export class ChromeNativeBridge<TSend = any, TReceive = any> {
   origin: string;
 
   /**
-   * The decimal handle value of the calling Chrome window. Windows only.
+   * The decimal handle value of the calling Chrome window. Available on Windows only.
    */
   parentWindow?: number;
 
   /**
-   * Create a new bridge with the given input and output. Input be a readable
-   * stream (`process.stdin` for getting data from Chrome), and output should
-   * be a writable stream (`process.stdout` for sending data to Chrome).
+   * Create a new bridge with the given input and output.
+   *
+   * @param args The arguments to the script. Use `process.argv`.
+   * @param input A readable stream for getting messages from Chrome. Use `process.stdin`.
+   * @param output A writable stream for sending message to Chrome. Use `process.stdout`.
    */
   constructor(
     args: string[],
@@ -152,7 +155,9 @@ export class ChromeNativeBridge<TSend = any, TReceive = any> {
   }
 
   /**
-   * Send the given data to the output.
+   * Send the given data to the output. The data will be passed to
+   * `JSON.stringify()` for serialisation, and will throw an error
+   * [if `JSON.stringify()` throws](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify#Exceptions).
    */
   emit(data: TSend) {
     let message;

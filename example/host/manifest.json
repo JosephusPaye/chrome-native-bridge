@@ -3,5 +3,5 @@
   "description": "Chrome Native Bridge example host",
   "path": "main.bat",
   "type": "stdio",
-  "allowed_origins": ["chrome-extension://jmlemfkannhmkhjmpdcdocecfccddlob/"]
+  "allowed_origins": ["chrome-extension://icohjddiakabndncflnacafeddndimfd/"]
 }

@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const { Client } = require('@josephuspaye/pipe-emitter');
 
-const { ChromeNativeBridge } = require('..');
+const { ChromeNativeBridge } = require('../..');
 
 const fd = fs.openSync(path.join(__dirname, 'log.txt'), 'a');
 const logFile = fs.createWriteStream(null, { fd });
