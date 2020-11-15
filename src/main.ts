@@ -14,7 +14,10 @@ export type OnMessageHandler<T> = (message: T) => void;
  * Handle an error receiving data. The second parameter
  * is the raw string of the message that caused the error.
  */
-export type OnErrorHandler = (err: ChromeNativeBridgeError, data: string) => void;
+export type OnErrorHandler = (
+  err: ChromeNativeBridgeError,
+  data: string
+) => void;
 
 /**
  * Implements the Chrome Native Messaging protocol and provides
