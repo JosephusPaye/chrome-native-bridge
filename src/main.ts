@@ -20,6 +20,15 @@ export type OnErrorHandler = (
 ) => void;
 
 /**
+ * Handle the end of the input stream. This can be used to
+ * know when to exit the native host, since it seems like
+ * Chrome wants to end the native host process, it closes
+ * stdin, triggering its 'end' event (at least from
+ * every case observed so far).
+ */
+export type OnEndHandler = () => void;
+
+/**
  * Implements the Chrome Native Messaging protocol and provides
  * a nicer interface over stdin/stdout for communicating with
  * a Chrome extension from a native Node.js script.
@@ -30,6 +39,7 @@ export class ChromeNativeBridge<TSend = any, TReceive = any> {
 
   private onMessage: OnMessageHandler<TReceive>;
   private onError: OnErrorHandler;
+  private onEnd: OnEndHandler;
 
   private hasNextMessageLength = false;
   private nextMessageLength = 0;
@@ -56,7 +66,11 @@ export class ChromeNativeBridge<TSend = any, TReceive = any> {
     args: string[],
     input: NodeJS.ReadableStream,
     output: NodeJS.WritableStream,
-    options: { onMessage: OnMessageHandler<TReceive>; onError: OnErrorHandler }
+    options: {
+      onMessage: OnMessageHandler<TReceive>;
+      onError: OnErrorHandler;
+      onEnd: OnEndHandler;
+    }
   ) {
     this.origin = '';
     this.parseArgs(args);
@@ -66,9 +80,14 @@ export class ChromeNativeBridge<TSend = any, TReceive = any> {
 
     this.onMessage = options.onMessage;
     this.onError = options.onError;
+    this.onEnd = options.onEnd;
 
     this.onDataChunk = this.onDataChunk.bind(this);
     this.input.on('data', this.onDataChunk);
+
+    this.input.on('end', () => {
+      this.onEnd();
+    });
   }
 
   /**

@@ -52,6 +52,7 @@ test('parses origin and parent window', async () => {
       {
         onError: unreachable('should not error'),
         onMessage: unreachable('should not get a message'),
+        onEnd() {},
       }
     );
 
@@ -69,6 +70,7 @@ test('parses origin and parent window', async () => {
       {
         onError() {},
         onMessage() {},
+        onEnd() {},
       }
     );
 
@@ -86,6 +88,7 @@ test('parses origin and parent window', async () => {
       {
         onError() {},
         onMessage() {},
+        onEnd() {},
       }
     );
 
@@ -106,7 +109,28 @@ test("calls onError() when there's an error receiving a message", async () => {
         done(bridge);
       },
       onMessage: unreachable('should not get a message'),
+      onEnd() {},
     });
+  });
+});
+
+test('calls onEnd() when the input stream is ended', async () => {
+  await asyncTest((done) => {
+    const input = Readable.from(['ok', 'boomer']);
+
+    // Pause the input stream so it isn't consumed and automatically ended
+    input.pause();
+
+    const bridge = new ChromeNativeBridge([], input, new Writable(), {
+      onError: unreachable('should not error'),
+      onMessage: unreachable('should not get a message'),
+      onEnd() {
+        done(bridge);
+      },
+    });
+
+    // Manually trigger the end event
+    input.emit('end');
   });
 });
 
@@ -123,6 +147,7 @@ test('calls onMessage() when a message is received', async () => {
         assert.equal(message, { ok: 'boomer' });
         done(bridge);
       },
+      onEnd() {},
     });
   });
 
@@ -147,6 +172,7 @@ test('calls onMessage() when a message is received', async () => {
           done(bridge);
         }
       },
+      onEnd() {},
     });
   });
 
@@ -168,6 +194,7 @@ test('calls onMessage() when a message is received', async () => {
         assert.equal(message, { greeting: 'oh hai', farewell: 'bye' });
         done(bridge);
       },
+      onEnd() {},
     });
   });
 });
@@ -181,6 +208,7 @@ test("emit() throws when there's an error sending a message", async () => {
       {
         onError: unreachable('should not error'),
         onMessage: unreachable('should not get a message'),
+        onEnd() {},
       }
     );
 
@@ -220,6 +248,7 @@ test('emit() sends a message', async () => {
     const bridge = new ChromeNativeBridge([], Readable.from([]), output, {
       onError: unreachable('should not error'),
       onMessage: unreachable('should not get a message'),
+      onEnd() {},
     });
 
     bridge.emit({ ok: 'boomer' });
@@ -257,6 +286,7 @@ test('close() closes the bridge and clears listeners', async () => {
           assert.unreachable('should only receive one message');
         }
       },
+      onEnd() {},
     });
 
     // Send the first message

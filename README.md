@@ -32,6 +32,12 @@ const bridge = new ChromeNativeBridge(
       // There's been an error parsing a received message.
       // Do something to handle it here...
     },
+
+    onEnd() {
+      // End of `process.stdin` detected: it's likely Chrome wants
+      // to end the native host process, so we exit here
+      process.exit();
+    },
   }
 );
 
@@ -116,6 +122,7 @@ class ChromeNativeBridge<TSend = any, TReceive = any> {
     options: {
       onMessage: OnMessageHandler<TReceive>;
       onError: OnErrorHandler;
+      onEnd: OnEndHandler;
     }
   );
 
@@ -155,6 +162,15 @@ type OnMessageHandler<T> = (message: T) => void;
  * is the raw string of the message that caused the error.
  */
 type OnErrorHandler = (err: ChromeNativeBridgeError, data: string) => void;
+
+/**
+ * Handle the end of the input stream. This can be used to
+ * know when to exit the native host, since it seems like
+ * Chrome wants to end the native host process, it closes
+ * stdin, triggering its 'end' event (at least from
+ * every case observed so far).
+ */
+export type OnEndHandler = () => void;
 ```
 
 ## Related
