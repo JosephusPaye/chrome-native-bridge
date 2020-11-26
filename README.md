@@ -164,11 +164,10 @@ type OnMessageHandler<T> = (message: T) => void;
 type OnErrorHandler = (err: ChromeNativeBridgeError, data: string) => void;
 
 /**
- * Handle the end of the input stream. This can be used to
- * know when to exit the native host, since it seems like
- * Chrome wants to end the native host process, it closes
- * stdin, triggering its 'end' event (at least from
- * every case observed so far).
+ * Handle the end of the input stream. This can be used to know when
+ * to exit the native host process, since it seems like when Chrome
+ * wants to end the process, it closes stdin, triggering its 'end'
+ * event (at least from every case I've observed so far).
  */
 export type OnEndHandler = () => void;
 ```
