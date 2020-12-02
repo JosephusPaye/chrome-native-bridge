@@ -117,12 +117,14 @@ class ChromeNativeBridge<TSend = any, TReceive = any> {
    */
   constructor(
     args: string[],
-    input: NodeJS.ReadableStream,
-    output: NodeJS.WritableStream,
+    input: stream.Readable,
+    output: stream.Writable,
     options: {
       onMessage: OnMessageHandler<TReceive>;
       onError: OnErrorHandler;
       onEnd: OnEndHandler;
+      mirrorInputTo?: Writable;
+      mirrorOutputTo?: Writable;
     }
   );
 

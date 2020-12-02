@@ -134,6 +134,60 @@ test('calls onEnd() when the input stream is ended', async () => {
   });
 });
 
+test.only('can mirror input and output to other streams', async () => {
+  // test mirroring of the input
+  await asyncTest((done) => {
+    const inputData = chromeMessage(JSON.stringify({ ok: 'boomer' }));
+
+    const input = Readable.from([inputData]);
+
+    const inputMirror = new PassThrough();
+
+    inputMirror.on('data', (data) => {
+      assert.equal(data, inputData);
+      done(bridge);
+    });
+
+    const bridge = new ChromeNativeBridge([], input, new Writable(), {
+      mirrorInputTo: inputMirror,
+      onError: unreachable('should not error'),
+      onMessage() {},
+      onEnd() {},
+    });
+  });
+
+  // test mirroring of the output
+  await asyncTest((done) => {
+    function parseMessage(buffer) {
+      const lengthBuffer = buffer.slice(0, 4);
+      const length = lengthBuffer.readUInt32LE(0);
+
+      const messageBuffer = buffer.slice(4, 4 + length);
+      const message = JSON.parse(messageBuffer.toString());
+
+      return message;
+    }
+
+    const output = new PassThrough();
+    const outputMirror = new PassThrough();
+
+    outputMirror.on('data', (chunk) => {
+      const message = parseMessage(chunk);
+      assert.equal(message, { ok: 'boomer' });
+      done(bridge);
+    });
+
+    const bridge = new ChromeNativeBridge([], Readable.from([]), output, {
+      mirrorOutputTo: outputMirror,
+      onError: unreachable('should not error'),
+      onMessage: unreachable('should not get a message'),
+      onEnd() {},
+    });
+
+    bridge.emit({ ok: 'boomer' });
+  });
+});
+
 test('calls onMessage() when a message is received', async () => {
   // test single message
   await asyncTest((done) => {

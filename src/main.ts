@@ -1,3 +1,5 @@
+import { PassThrough, Readable, Writable } from 'stream';
+
 /**
  * An error that occurs while sending or receiving messages.
  */
@@ -33,8 +35,8 @@ export type OnEndHandler = () => void;
  * a Chrome extension from a native Node.js script.
  */
 export class ChromeNativeBridge<TSend = any, TReceive = any> {
-  private input: NodeJS.ReadableStream;
-  private output: NodeJS.WritableStream;
+  private input: Readable;
+  private output: Writable;
 
   private onMessage: OnMessageHandler<TReceive>;
   private onError: OnErrorHandler;
@@ -63,19 +65,34 @@ export class ChromeNativeBridge<TSend = any, TReceive = any> {
    */
   constructor(
     args: string[],
-    input: NodeJS.ReadableStream,
-    output: NodeJS.WritableStream,
+    input: Readable,
+    output: Writable,
     options: {
       onMessage: OnMessageHandler<TReceive>;
       onError: OnErrorHandler;
       onEnd: OnEndHandler;
+      mirrorInputTo?: Writable;
+      mirrorOutputTo?: Writable;
     }
   ) {
     this.origin = '';
-    this.parseArgs(args);
+    this.parseAndAssignArgs(args);
 
     this.input = input;
-    this.output = output;
+
+    if (options.mirrorInputTo) {
+      input.pipe(options.mirrorInputTo);
+    }
+
+    if (options.mirrorOutputTo) {
+      const outputProxy = new PassThrough();
+      outputProxy.pipe(output);
+      outputProxy.pipe(options.mirrorOutputTo);
+
+      this.output = outputProxy;
+    } else {
+      this.output = output;
+    }
 
     this.onMessage = options.onMessage;
     this.onError = options.onError;
@@ -92,7 +109,7 @@ export class ChromeNativeBridge<TSend = any, TReceive = any> {
   /**
    * Parse the given args and set them.
    */
-  private parseArgs(args: string[]) {
+  private parseAndAssignArgs(args: string[]) {
     // args from Chrome look like this: (node exe path, current script path, origin, chrome window hwnd)
     // last item is only available on Windows
     this.origin = args[2];
@@ -193,7 +210,7 @@ export class ChromeNativeBridge<TSend = any, TReceive = any> {
     const length = Buffer.alloc(4);
     length.writeUInt32LE(message.length);
 
-    this.output.write(Buffer.concat([length, message]));
+    this.output.write(Buffer.concat([length, message]), 'binary');
   }
 
   /**
